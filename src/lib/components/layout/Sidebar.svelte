@@ -61,6 +61,7 @@
 	import Sidebar from '../icons/Sidebar.svelte';
 	import PinnedModelList from './Sidebar/PinnedModelList.svelte';
 	import Note from '../icons/Note.svelte';
+	import ChatBubble from '../icons/ChatBubble.svelte';
 	import { slide } from 'svelte/transition';
 
 	const BREAKPOINT = 768;
@@ -513,7 +514,7 @@
 			showSidebar.set(!$showSidebar);
 		}}
 	/>
-{/if}
+		{/if}
 
 <SearchModal
 	bind:show={$showSearch}
@@ -672,6 +673,29 @@
 						</Tooltip>
 					</div>
 				{/if}
+
+				<div class="">
+					<Tooltip content={$i18n.t('Live Chat Tab Description')} placement="right">
+						<a
+							id="sidebar-live-chat-button-collapsed"
+							class=" cursor-pointer flex rounded-xl hover:bg-gray-100 dark:hover:bg-gray-850 transition group"
+							href="/live-chat"
+							on:click={async (e) => {
+								e.stopImmediatePropagation();
+								e.preventDefault();
+
+								goto('/live-chat');
+								itemClickHandler();
+							}}
+							draggable="false"
+							aria-label={$i18n.t('Live Chat')}
+						>
+							<div class=" self-center flex items-center justify-center size-9">
+								<ChatBubble className="size-4.5" />
+							</div>
+						</a>
+					</Tooltip>
+				</div>
 			</div>
 		</button>
 
@@ -877,6 +901,34 @@
 							</a>
 						</div>
 					{/if}
+
+					<div class="px-[7px] flex justify-center text-gray-800 dark:text-gray-200">
+						<a
+							id="sidebar-live-chat-button"
+							class="grow flex items-start space-x-3 rounded-2xl px-2.5 py-2 hover:bg-gray-100 dark:hover:bg-gray-900 transition outline-none"
+							href="/live-chat"
+							on:click={async (e) => {
+								e.stopImmediatePropagation();
+								e.preventDefault();
+
+								goto('/live-chat');
+								itemClickHandler();
+							}}
+							draggable="false"
+							aria-label={$i18n.t('Live Chat')}
+						>
+							<div class="self-center">
+								<ChatBubble className="size-4.5" strokeWidth="2" />
+							</div>
+
+							<div class="flex flex-col justify-center translate-y-[0.5px] text-left">
+								<div class=" text-sm font-primary">{$i18n.t('Live Chat')}</div>
+								<div class=" text-xs text-gray-500 dark:text-gray-400 leading-tight">
+									{$i18n.t('Live Chat Tab Description')}
+								</div>
+							</div>
+						</a>
+					</div>
 				</div>
 
 				{#if ($models ?? []).length > 0 && ($settings?.pinnedModels ?? []).length > 0}

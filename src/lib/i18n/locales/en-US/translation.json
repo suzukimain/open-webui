@@ -1728,6 +1728,8 @@
 	"Width": "",
 	"Won": "",
 	"Works together with top-k. A higher value (e.g., 0.95) will lead to more diverse text, while a lower value (e.g., 0.5) will generate more focused and conservative text.": "",
+	"Live Chat": "Live Chat",
+	"Live Chat Tab Description": "これはLive Chat用のタブです",
 	"Workspace": "",
 	"Workspace Permissions": "",
 	"Write": "",
