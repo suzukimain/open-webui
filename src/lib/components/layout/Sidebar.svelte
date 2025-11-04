@@ -731,6 +731,24 @@
 	</div>
 {/if}
 
+{#if $mobile && !$showSidebar}
+	<!-- Floating Live Chat button for mobile when the sidebar is hidden -->
+	<div class="fixed bottom-4 right-4 z-50 md:hidden">
+		<button
+			id="live-chat-floating"
+			class="flex items-center justify-center w-12 h-12 rounded-full bg-indigo-600 text-white shadow-lg hover:opacity-95"
+			on:click={async (e) => {
+				e.stopPropagation();
+				e.preventDefault();
+				goto('/live-chat');
+			}}
+			aria-label={$i18n.t('Live Chat')}
+		>
+			<ChatBubble className="size-5" strokeWidth="2" />
+		</button>
+	</div>
+{/if}
+
 {#if $showSidebar}
 	<div
 		bind:this={navElement}
