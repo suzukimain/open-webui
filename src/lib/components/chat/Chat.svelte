@@ -92,6 +92,7 @@
 	import { getFunctions } from '$lib/apis/functions';
 	import Image from '../common/Image.svelte';
 	import { updateFolderById } from '$lib/apis/folders';
+	import Live2D from '$lib/components/live2d/Live2D.svelte';
 
 	export let chatIdProp = '';
 
@@ -2403,137 +2404,149 @@
 					/>
 
 					<div class="flex flex-col flex-auto z-10 w-full @container overflow-auto">
-						{#if ($settings?.landingPageMode === 'chat' && !$selectedFolder) || createMessagesList(history, history.currentId).length > 0}
-							<div
-								class=" pb-2.5 flex flex-col justify-between w-full flex-auto overflow-auto h-0 max-w-full z-10 scrollbar-hidden"
-								id="messages-container"
-								bind:this={messagesContainerElement}
-								on:scroll={(e) => {
-									autoScroll =
-										messagesContainerElement.scrollHeight - messagesContainerElement.scrollTop <=
-										messagesContainerElement.clientHeight + 5;
-								}}
-							>
-								<div class=" h-full w-full flex flex-col">
-									<Messages
-										chatId={$chatId}
-										bind:history
-										bind:autoScroll
-										bind:prompt
-										setInputText={(text) => {
-											messageInput?.setText(text);
-										}}
-										{selectedModels}
-										{atSelectedModel}
-										{sendMessage}
-										{showMessage}
-										{submitMessage}
-										{continueResponse}
-										{regenerateResponse}
-										{mergeResponses}
-										{chatActionHandler}
-										{addMessages}
-										topPadding={true}
-										bottomPadding={files.length > 0}
-										{onSelect}
-									/>
+						<!-- 上部は Navbar を維持 -->
+						{#if true}
+							<!-- 2カラムレイアウト: 左 = Live2D、右 = メッセージ + 入力 -->
+							<div class="flex flex-1 h-full min-h-0">
+								<div class="w-1/2 min-w-0 border-r border-gray-200 dark:border-gray-800 p-2 overflow-auto">
+									<!-- Live2D エリア -->
+									<Live2D />
 								</div>
-							</div>
+								<div class="w-1/2 flex flex-col min-w-0">
+									{#if ($settings?.landingPageMode === 'chat' && !$selectedFolder) || createMessagesList(history, history.currentId).length > 0}
+										<div
+											class=" pb-2.5 flex flex-col justify-between w-full flex-auto overflow-auto h-0 max-w-full z-10 scrollbar-hidden"
+											id="messages-container"
+											bind:this={messagesContainerElement}
+											on:scroll={(e) => {
+												autoScroll =
+													messagesContainerElement.scrollHeight - messagesContainerElement.scrollTop <=
+													messagesContainerElement.clientHeight + 5;
+											}}
+											>
+											<div class=" h-full w-full flex flex-col">
+												<Messages
+													chatId={$chatId}
+													bind:history
+													bind:autoScroll
+													bind:prompt
+													setInputText={(text) => {
+														messageInput?.setText(text);
+													}}
+													{selectedModels}
+													{atSelectedModel}
+													{sendMessage}
+													{showMessage}
+													{submitMessage}
+													{continueResponse}
+													{regenerateResponse}
+													{mergeResponses}
+													{chatActionHandler}
+													{addMessages}
+													topPadding={true}
+													bottomPadding={files.length > 0}
+													{onSelect}
+												/>
+											</div>
+										</div>
 
-							<div class=" pb-2">
-								<MessageInput
-									bind:this={messageInput}
-									{history}
-									{taskIds}
-									{selectedModels}
-									bind:files
-									bind:prompt
-									bind:autoScroll
-									bind:selectedToolIds
-									bind:selectedFilterIds
-									bind:imageGenerationEnabled
-									bind:codeInterpreterEnabled
-									bind:webSearchEnabled
-									bind:atSelectedModel
-									bind:showCommands
-									toolServers={$toolServers}
-									{generating}
-									{stopResponse}
-									{createMessagePair}
-									onChange={(data) => {
-										if (!$temporaryChatEnabled) {
-											saveDraft(data, $chatId);
-										}
-									}}
-									on:upload={async (e) => {
-										const { type, data } = e.detail;
+										<div class=" pb-2">
+											<MessageInput
+												bind:this={messageInput}
+												{history}
+												{taskIds}
+												{selectedModels}
+												bind:files
+												bind:prompt
+												bind:autoScroll
+												bind:selectedToolIds
+												bind:selectedFilterIds
+												bind:imageGenerationEnabled
+												bind:codeInterpreterEnabled
+												bind:webSearchEnabled
+												bind:atSelectedModel
+												bind:showCommands
+												toolServers={$toolServers}
+												{generating}
+												{stopResponse}
+												{createMessagePair}
+												onChange={(data) => {
+													if (!$temporaryChatEnabled) {
+														saveDraft(data, $chatId);
+													}
+												}}
+												on:upload={async (e) => {
+													const { type, data } = e.detail;
 
-										if (type === 'web') {
-											await uploadWeb(data);
-										} else if (type === 'youtube') {
-											await uploadYoutubeTranscription(data);
-										} else if (type === 'google-drive') {
-											await uploadGoogleDriveFile(data);
-										}
-									}}
-									on:submit={async (e) => {
-										clearDraft();
-										if (e.detail || files.length > 0) {
-											await tick();
+													if (type === 'web') {
+														await uploadWeb(data);
+													} else if (type === 'youtube') {
+														await uploadYoutubeTranscription(data);
+													} else if (type === 'google-drive') {
+														await uploadGoogleDriveFile(data);
+													}
+												}}
+												on:submit={async (e) => {
+													clearDraft();
+													if (e.detail || files.length > 0) {
+														await tick();
+												
+														submitPrompt(e.detail.replaceAll('\n\n', '\n'));
+													}
+												}}
+											/>
 
-											submitPrompt(e.detail.replaceAll('\n\n', '\n'));
-										}
-									}}
-								/>
+											<div
+												class="absolute bottom-1 text-xs text-gray-500 text-center line-clamp-1 right-0 left-0"
+											>
+												<!-- {$i18n.t('LLMs can make mistakes. Verify important information.')} -->
+											</div>
+										</div>
+									{:else}
+										<div class="flex items-center h-full">
+											<Placeholder
+												{history}
+												{selectedModels}
+												bind:messageInput
+												bind:files
+												bind:prompt
+												bind:autoScroll
+												bind:selectedToolIds
+												bind:selectedFilterIds
+												bind:imageGenerationEnabled
+												bind:codeInterpreterEnabled
+												bind:webSearchEnabled
+												bind:atSelectedModel
+												bind:showCommands
+												toolServers={$toolServers}
+												{stopResponse}
+												{createMessagePair}
+												{onSelect}
+												onChange={(data) => {
+													if (!$temporaryChatEnabled) {
+														saveDraft(data);
+													}
+												}}
+												on:upload={async (e) => {
+													const { type, data } = e.detail;
 
-								<div
-									class="absolute bottom-1 text-xs text-gray-500 text-center line-clamp-1 right-0 left-0"
-								>
-									<!-- {$i18n.t('LLMs can make mistakes. Verify important information.')} -->
+													if (type === 'web') {
+														await uploadWeb(data);
+													} else if (type === 'youtube') {
+														await uploadYoutubeTranscription(data);
+													} 
+													}}
+												on:submit={async (e) => {
+													clearDraft();
+													if (e.detail || files.length > 0) {
+														await tick();
+														submitPrompt(e.detail.replaceAll('\n\n', '\n'));
+													}
+												}}
+											/>
+											</div>
+									{/if}
 								</div>
-							</div>
-						{:else}
-							<div class="flex items-center h-full">
-								<Placeholder
-									{history}
-									{selectedModels}
-									bind:messageInput
-									bind:files
-									bind:prompt
-									bind:autoScroll
-									bind:selectedToolIds
-									bind:selectedFilterIds
-									bind:imageGenerationEnabled
-									bind:codeInterpreterEnabled
-									bind:webSearchEnabled
-									bind:atSelectedModel
-									bind:showCommands
-									toolServers={$toolServers}
-									{stopResponse}
-									{createMessagePair}
-									{onSelect}
-									onChange={(data) => {
-										if (!$temporaryChatEnabled) {
-											saveDraft(data);
-										}
-									}}
-									on:upload={async (e) => {
-										const { type, data } = e.detail;
-
-										if (type === 'web') {
-											await uploadWeb(data);
-										} else if (type === 'youtube') {
-											await uploadYoutubeTranscription(data);
-										}
-									}}
-									on:submit={async (e) => {
-										clearDraft();
-										if (e.detail || files.length > 0) {
-											await tick();
-											submitPrompt(e.detail.replaceAll('\n\n', '\n'));
-										}
-									}}
-								/>
 							</div>
 						{/if}
 					</div>
