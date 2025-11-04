@@ -61,7 +61,6 @@
 	import Sidebar from '../icons/Sidebar.svelte';
 	import PinnedModelList from './Sidebar/PinnedModelList.svelte';
 	import Note from '../icons/Note.svelte';
-    import ChatBubbles from '../icons/ChatBubbles.svelte';
 	import { slide } from 'svelte/transition';
 
 	const BREAKPOINT = 768;
@@ -1198,31 +1197,6 @@
 						</div>
 					</div>
 				</Folder>
-			</div>
-
-			<!-- Live Chat menu item -->
-			<div class="px-[7px] flex justify-center text-gray-800 dark:text-gray-200">
-				<a
-					id="sidebar-livechat-button"
-					class="grow flex items-center space-x-3 rounded-2xl px-2.5 py-2 hover:bg-gray-100 dark:hover:bg-gray-900 transition"
-					href="/live-chat"
-					on:click={async (e) => {
-						e.stopImmediatePropagation();
-						e.preventDefault();
-						goto('/live-chat');
-						itemClickHandler();
-					}}
-					draggable="false"
-					aria-label={$i18n.t('Live Chat')}
-				>
-					<div class="self-center">
-						<ChatBubbles className="size-4.5" strokeWidth="2" />
-					</div>
-
-					<div class="flex self-center translate-y-[0.5px]">
-						<div class=" self-center text-sm font-primary">{$i18n.t('Live Chat')}</div>
-					</div>
-				</a>
 			</div>
 
 			<div class="px-1.5 pt-1.5 pb-2 sticky bottom-0 z-10 -mt-3 sidebar">
