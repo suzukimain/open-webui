@@ -2418,6 +2418,31 @@
 			{/if}
 
 			<PaneGroup direction="horizontal" class="w-full h-full">
+				{#if !$mobile}
+					<Pane defaultSize={50} minSize={20} class="h-full flex relative max-w-full flex-col">
+						<div class="flex flex-col flex-1 z-10 bg-white/70 dark:bg-gray-950/50 backdrop-blur border-r border-gray-100 dark:border-gray-850">
+							<div class="px-3 py-2 border-b border-gray-100 dark:border-gray-900 text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400">
+								Live2D
+							</div>
+							<div class="flex-1 relative overflow-hidden">
+								<div
+									id="live2d-container"
+									class="absolute inset-0 flex items-center justify-center text-gray-400 dark:text-gray-500 text-sm"
+								>
+									Live2D Preview
+								</div>
+							</div>
+						</div>
+					</Pane>
+
+					<PaneResizer
+						class="relative flex items-center justify-center group border-l border-gray-50 dark:border-gray-850 hover:border-gray-200 dark:hover:border-gray-800  transition z-20"
+						id="live2d-resizer"
+					>
+						<div class=" absolute -left-1.5 -right-1.5 -top-0 -bottom-0 z-20 cursor-col-resize bg-transparent" />
+					</PaneResizer>
+				{/if}
+
 				<Pane defaultSize={50} minSize={30} class="h-full flex relative max-w-full flex-col">
 					<Navbar
 						bind:this={navbarElement}
